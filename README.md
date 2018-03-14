@@ -3,7 +3,8 @@ Ledger U2F Applet
 
 **IMPORTANT: This repository is used for class [PV204 Security Technologies at Masaryk University](https://is.muni.cz/auth/predmety/predmet?lang=en;setlang=en;pvysl=3141746). All meaningful improvements will be attempted to be pushed to upstream repository in June 2018.**
 
-[![Build status](https://travis-ci.org/JavaCardSpot-dev/ledger-u2f-javacard.svg?branch=master)](https://travis-ci.org/JavaCardSpot-dev/ledger-u2f-javacard)
+[![Build status](https://travis-ci.org/JavaCardSpot-dev/ledger-u2f-javacard.svg?branch=master)](https://travis-ci.org/JavaCardSpot-dev/ledger-u2f-javacard) [![Codecov](https://img.shields.io/codecov/c/github/javacardspot-dev/ledger-u2f-javacard.svg)](https://codecov.io/gh/JavaCardSpot-dev/ledger-u2f-javacard)
+
 
 # Overview
 
