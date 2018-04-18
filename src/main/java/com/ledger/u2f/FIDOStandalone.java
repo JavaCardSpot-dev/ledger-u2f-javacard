@@ -35,6 +35,9 @@ public class FIDOStandalone implements FIDOAPI {
 
     private static final byte[] IV_ZERO_AES = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
+    /**
+     * Init cipher engines and allocate memory.
+     */
     public FIDOStandalone() {
         scratch = JCSystem.makeTransientByteArray((short) 64, JCSystem.CLEAR_ON_DESELECT);
         keyPair = new KeyPair(
@@ -53,6 +56,16 @@ public class FIDOStandalone implements FIDOAPI {
         cipherDecrypt.init(chipKey, Cipher.MODE_DECRYPT, IV_ZERO_AES, (short) 0, (short) IV_ZERO_AES.length);
     }
 
+    /**
+     * Combine bytes of two arrays into the target array.
+     * @param array1
+     * @param array1Offset
+     * @param array2
+     * @param array2Offset
+     * @param target
+     * @param targetOffset
+     * @param length 
+     */
     private static void interleave(byte[] array1, short array1Offset, byte[] array2, short array2Offset, byte[] target, short targetOffset, short length) {
         for (short i = 0; i < length; i++) {
             short a = (short) (array1[(short) (array1Offset + i)] & 0xff);
@@ -62,6 +75,16 @@ public class FIDOStandalone implements FIDOAPI {
         }
     }
 
+    /**
+     * Separate bytes of two interleaved arrays.
+     * @param src
+     * @param srcOffset
+     * @param array1
+     * @param array1Offset
+     * @param array2
+     * @param array2Offset
+     * @param length 
+     */
     private static void deinterleave(byte[] src, short srcOffset, byte[] array1, short array1Offset, byte[] array2, short array2Offset, short length) {
         for (short i = 0; i < length; i++) {
             short a = (short) (src[(short) (srcOffset + 2 * i)] & 0xff);
@@ -71,6 +94,7 @@ public class FIDOStandalone implements FIDOAPI {
         }
     }
 
+    /* @override */
     public short generateKeyAndWrap(byte[] applicationParameter, short applicationParameterOffset, ECPrivateKey generatedPrivateKey, byte[] publicKey, short publicKeyOffset, byte[] keyHandle, short keyHandleOffset) {
         // Generate a new pair
         keyPair.genKeyPair();
@@ -84,6 +108,7 @@ public class FIDOStandalone implements FIDOAPI {
         return (short) 64;
     }
 
+    /* @override */
     public boolean unwrap(byte[] keyHandle, short keyHandleOffset, short keyHandleLength, byte[] applicationParameter, short applicationParameterOffset, ECPrivateKey unwrappedPrivateKey) {
         // Verify
         cipherDecrypt.doFinal(keyHandle, keyHandleOffset, (short) 64, keyHandle, keyHandleOffset);
