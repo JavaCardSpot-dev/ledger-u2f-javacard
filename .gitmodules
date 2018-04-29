@@ -4,3 +4,6 @@
 [submodule "libs"]
 	path = libs
 	url = https://github.com/J08nY/javacard-libs
+[submodule "JCProfiler"]
+	path = JCProfiler
+	url = https://github.com/OpenCryptoProject/JCProfiler.git
