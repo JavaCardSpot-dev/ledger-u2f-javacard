@@ -169,15 +169,15 @@ public class U2FApplet extends Applet implements ExtendedLength {
      * @throws ISOException
      */
     private void handleEnroll(APDU apdu) throws ISOException {
-        PM.check(PMC.TRAP_methodName_1);
+        PM.check(PMC.TRAP_methodName_0);
         byte[] buffer = apdu.getBuffer();
-        PM.check(PMC.TRAP_methodName_2);
+        PM.check(PMC.TRAP_methodName_0);
         short len = apdu.setIncomingAndReceive();
-        PM.check(PMC.TRAP_methodName_3);
+        PM.check(PMC.TRAP_methodName_0);
         short dataOffset = apdu.getOffsetCdata();
-        PM.check(PMC.TRAP_methodName_4);
+        PM.check(PMC.TRAP_methodName_0);
         boolean extendedLength = (dataOffset != ISO7816.OFFSET_CDATA);
-        PM.check(PMC.TRAP_methodName_5);
+        PM.check(PMC.TRAP_methodName_0);
         short outOffset;
         // Enroll should be exactly 64 bytes
         if (len != 64) {
@@ -195,58 +195,58 @@ public class U2FApplet extends Applet implements ExtendedLength {
         }
         // Set user presence
         scratchPersistent[0] = (byte) 1;
-        PM.check(PMC.TRAP_methodName_6);
+        PM.check(PMC.TRAP_methodName_0);
         // Generate the key pair
         if (localPrivateTransient) {
             Secp256r1.setCommonCurveParameters(localPrivateKey);
         }
-        PM.check(PMC.TRAP_methodName_7);
+        PM.check(PMC.TRAP_methodName_0);
         short keyHandleLength = fidoImpl.generateKeyAndWrap(buffer, (short) (dataOffset + APDU_APPLICATION_PARAMETER_OFFSET), localPrivateKey, scratch, SCRATCH_PUBLIC_KEY_OFFSET, scratch, SCRATCH_KEY_HANDLE_OFFSET);
-        PM.check(PMC.TRAP_methodName_8);
+        PM.check(PMC.TRAP_methodName_0);
         scratch[SCRATCH_PAD] = ENROLL_LEGACY_VERSION;
         scratch[SCRATCH_KEY_HANDLE_LENGTH_OFFSET] = (byte) keyHandleLength;
-        PM.check(PMC.TRAP_methodName_9);
+        PM.check(PMC.TRAP_methodName_0);
         // Prepare the attestation
         attestationSignature.update(RFU_ENROLL_SIGNED_VERSION, (short) 0, (short) 1);
         attestationSignature.update(buffer, (short) (dataOffset + APDU_APPLICATION_PARAMETER_OFFSET), (short) 32);
         attestationSignature.update(buffer, (short) (dataOffset + APDU_CHALLENGE_OFFSET), (short) 32);
         attestationSignature.update(scratch, SCRATCH_KEY_HANDLE_OFFSET, keyHandleLength);
         attestationSignature.update(scratch, SCRATCH_PUBLIC_KEY_OFFSET, (short) 65);
-        PM.check(PMC.TRAP_methodName_10);
+        PM.check(PMC.TRAP_methodName_0);
         outOffset = (short) (ENROLL_PUBLIC_KEY_OFFSET + 65 + 1 + keyHandleLength);
         if (extendedLength) {
             // If using extended length, the message can be completed and sent immediately
-            PM.check(PMC.TRAP_methodName_11);
+            PM.check(PMC.TRAP_methodName_0);
             scratch[SCRATCH_TRANSPORT_STATE] = TRANSPORT_EXTENDED;
-            PM.check(PMC.TRAP_methodName_12);
+            PM.check(PMC.TRAP_methodName_0);
             outOffset = Util.arrayCopyNonAtomic(scratch, SCRATCH_PAD, buffer, (short) 0, outOffset);
-            PM.check(PMC.TRAP_methodName_13);
+            PM.check(PMC.TRAP_methodName_0);
             outOffset = Util.arrayCopyNonAtomic(attestationCertificate, (short) 0, buffer, outOffset, (short) attestationCertificate.length);
-            PM.check(PMC.TRAP_methodName_14);
+            PM.check(PMC.TRAP_methodName_0);
             short signatureSize = attestationSignature.sign(buffer, (short) 0, (short) 0, buffer, outOffset);
-            PM.check(PMC.TRAP_methodName_15);
+            PM.check(PMC.TRAP_methodName_0);
             outOffset += signatureSize;
-            PM.check(PMC.TRAP_methodName_16);
+            PM.check(PMC.TRAP_methodName_0);
             apdu.setOutgoingAndSend((short) 0, outOffset);
         } else {
             // Otherwise, keep the signature and proceed to send the first chunk
             short signatureSize = attestationSignature.sign(buffer, (short) 0, (short) 0, scratch, SCRATCH_SIGNATURE_OFFSET);
-            PM.check(PMC.TRAP_methodName_17);
+            PM.check(PMC.TRAP_methodName_0);
             scratch[SCRATCH_TRANSPORT_STATE] = TRANSPORT_NOT_EXTENDED;
-            PM.check(PMC.TRAP_methodName_18);
+            PM.check(PMC.TRAP_methodName_0);
             Util.setShort(scratch, SCRATCH_CURRENT_OFFSET, (short) 0);
-            PM.check(PMC.TRAP_methodName_19);
+            PM.check(PMC.TRAP_methodName_0);
             Util.setShort(scratch, SCRATCH_SIGNATURE_LENGTH, signatureSize);
-            PM.check(PMC.TRAP_methodName_20);
+            PM.check(PMC.TRAP_methodName_0);
             Util.setShort(scratch, SCRATCH_NONCERT_LENGTH, outOffset);
-            PM.check(PMC.TRAP_methodName_21);
+            PM.check(PMC.TRAP_methodName_0);
             Util.setShort(scratch, SCRATCH_FULL_LENGTH, (short) (outOffset + attestationCertificate.length + signatureSize));
-            PM.check(PMC.TRAP_methodName_22);
+            PM.check(PMC.TRAP_methodName_0);
             scratch[SCRATCH_INCLUDE_CERT] = (byte) 1;
-            PM.check(PMC.TRAP_methodName_23);
+            PM.check(PMC.TRAP_methodName_0);
             handleGetData(apdu);
         }
-        PM.check(PMC.TRAP_methodName_24);
+        PM.check(PMC.TRAP_methodName_0);
     }
 
     /**
@@ -256,19 +256,19 @@ public class U2FApplet extends Applet implements ExtendedLength {
      * @throws ISOException
      */
     private void handleSign(APDU apdu) throws ISOException {
-        PM.check(PMC.TRAP_methodName_25);
+        PM.check(PMC.TRAP_methodName_0);
         byte[] buffer = apdu.getBuffer();
-        PM.check(PMC.TRAP_methodName_26);
+        PM.check(PMC.TRAP_methodName_0);
         short len = apdu.setIncomingAndReceive();
-        PM.check(PMC.TRAP_methodName_27);
+        PM.check(PMC.TRAP_methodName_0);
         short dataOffset = apdu.getOffsetCdata();
-        PM.check(PMC.TRAP_methodName_28);
+        PM.check(PMC.TRAP_methodName_0);
         byte p1 = buffer[ISO7816.OFFSET_P1];
         boolean sign = false;
         short keyHandleLength;
         boolean extendedLength = (dataOffset != ISO7816.OFFSET_CDATA);
         short outOffset = SCRATCH_PAD;
-        PM.check(PMC.TRAP_methodName_29);
+        PM.check(PMC.TRAP_methodName_0);
         if (len < 65) {
             ISOException.throwIt(ISO7816.SW_WRONG_LENGTH);
         }
@@ -281,7 +281,7 @@ public class U2FApplet extends Applet implements ExtendedLength {
             default:
                 ISOException.throwIt(ISO7816.SW_INCORRECT_P1P2);
         }
-        PM.check(PMC.TRAP_methodName_30);
+        PM.check(PMC.TRAP_methodName_0);
         // Check if the counter overflowed
         if (counterOverflowed) {
             ISOException.throwIt(ISO7816.SW_FILE_FULL);
@@ -291,16 +291,16 @@ public class U2FApplet extends Applet implements ExtendedLength {
             Secp256r1.setCommonCurveParameters(localPrivateKey);
         }
         keyHandleLength = (short) (buffer[(short) (dataOffset + 64)] & 0xff);
-        PM.check(PMC.TRAP_methodName_31);
+        PM.check(PMC.TRAP_methodName_0);
         if (!fidoImpl.unwrap(buffer, (short) (dataOffset + 65), keyHandleLength, buffer, (short) (dataOffset + APDU_APPLICATION_PARAMETER_OFFSET), (sign ? localPrivateKey : null))) {
             ISOException.throwIt(FIDO_SW_INVALID_KEY_HANDLE);
         }
-        PM.check(PMC.TRAP_methodName_32);
+        PM.check(PMC.TRAP_methodName_0);
         // If not signing, return with the "correct" exception
         if (!sign) {
             ISOException.throwIt(FIDO_SW_TEST_OF_PRESENCE_REQUIRED);
         }
-        PM.check(PMC.TRAP_methodName_33);
+        PM.check(PMC.TRAP_methodName_0);
         // If signing, only proceed if user presence can be validated
         if ((flags & INSTALL_FLAG_DISABLE_USER_PRESENCE) == 0) {
             if (scratchPersistent[0] != 0) {
@@ -308,10 +308,10 @@ public class U2FApplet extends Applet implements ExtendedLength {
             }
         }
         scratchPersistent[0] = (byte) 1;
-        PM.check(PMC.TRAP_methodName_34);
+        PM.check(PMC.TRAP_methodName_0);
         // Increase the counter
         boolean carry = false;
-        PM.check(PMC.TRAP_methodName_35);
+        PM.check(PMC.TRAP_methodName_0);
         JCSystem.beginTransaction();
         for (byte i = 0; i < 4; i++) {
             short addValue = (i == 0 ? (short) 1 : (short) 0);
@@ -323,49 +323,49 @@ public class U2FApplet extends Applet implements ExtendedLength {
             counter[(short) (4 - 1 - i)] = (byte) val;
         }
         JCSystem.commitTransaction();
-        PM.check(PMC.TRAP_methodName_36);
+        PM.check(PMC.TRAP_methodName_0);
         if (carry) {
             // Game over
             counterOverflowed = true;
             ISOException.throwIt(ISO7816.SW_FILE_FULL);
         }
-        PM.check(PMC.TRAP_methodName_37);
+        PM.check(PMC.TRAP_methodName_0);
         // Prepare reply
         scratch[outOffset++] = FLAG_USER_PRESENCE_VERIFIED;
         outOffset = Util.arrayCopyNonAtomic(counter, (short) 0, scratch, outOffset, (short) 4);
-        PM.check(PMC.TRAP_methodName_38);
+        PM.check(PMC.TRAP_methodName_0);
         localSignature.init(localPrivateKey, Signature.MODE_SIGN);
-        PM.check(PMC.TRAP_methodName_39);
+        PM.check(PMC.TRAP_methodName_0);
         localSignature.update(buffer, (short) (dataOffset + APDU_APPLICATION_PARAMETER_OFFSET), (short) 32);
-        PM.check(PMC.TRAP_methodName_40);
+        PM.check(PMC.TRAP_methodName_0);
         localSignature.update(scratch, SCRATCH_PAD, (short) 5);
-        PM.check(PMC.TRAP_methodName_41);
+        PM.check(PMC.TRAP_methodName_0);
         outOffset += localSignature.sign(buffer, (short) (dataOffset + APDU_CHALLENGE_OFFSET), (short) 32, scratch, outOffset);
-        PM.check(PMC.TRAP_methodName_42);
+        PM.check(PMC.TRAP_methodName_0);
         if (extendedLength) {
             // If using extended length, the message can be completed and sent immediately
             scratch[SCRATCH_TRANSPORT_STATE] = TRANSPORT_EXTENDED;
-            PM.check(PMC.TRAP_methodName_43);
+            PM.check(PMC.TRAP_methodName_0);
             Util.arrayCopyNonAtomic(scratch, SCRATCH_PAD, buffer, (short) 0, outOffset);
-            PM.check(PMC.TRAP_methodName_44);
+            PM.check(PMC.TRAP_methodName_0);
             apdu.setOutgoingAndSend((short) 0, (short) (outOffset - SCRATCH_PAD));
         } else {
             // Otherwise send the first chunk
             scratch[SCRATCH_TRANSPORT_STATE] = TRANSPORT_NOT_EXTENDED;
-            PM.check(PMC.TRAP_methodName_45);
+            PM.check(PMC.TRAP_methodName_0);
             Util.setShort(scratch, SCRATCH_CURRENT_OFFSET, (short) 0);
-            PM.check(PMC.TRAP_methodName_46);
+            PM.check(PMC.TRAP_methodName_0);
             Util.setShort(scratch, SCRATCH_SIGNATURE_LENGTH, (short) 0);
-            PM.check(PMC.TRAP_methodName_47);
+            PM.check(PMC.TRAP_methodName_0);
             Util.setShort(scratch, SCRATCH_NONCERT_LENGTH, (short) (outOffset - SCRATCH_PAD));
-            PM.check(PMC.TRAP_methodName_48);
+            PM.check(PMC.TRAP_methodName_0);
             Util.setShort(scratch, SCRATCH_FULL_LENGTH, (short) (outOffset - SCRATCH_PAD));
-            PM.check(PMC.TRAP_methodName_49);
+            PM.check(PMC.TRAP_methodName_0);
             scratch[SCRATCH_INCLUDE_CERT] = (byte) 0;
-            PM.check(PMC.TRAP_methodName_50);
+            PM.check(PMC.TRAP_methodName_0);
             handleGetData(apdu);
         }
-        PM.check(PMC.TRAP_methodName_51);
+        PM.check(PMC.TRAP_methodName_0);
     }
 
     /**
@@ -472,7 +472,7 @@ public class U2FApplet extends Applet implements ExtendedLength {
                     handleSetAttestationCert(apdu);
                     break;
                 case INS_PERF_SETSTOP:
-                    PM.m_perfStop = Util.makeShort(buffer[ISO7816.OFFSET_CDATA], buffer[(short) (ISO7816.OFFSET_CDATA + 1)]);
+                    PM.m_perfStop = Util.makeShort(apdubuf[ISO7816.OFFSET_CDATA], apdubuf[(short) (ISO7816.OFFSET_CDATA + 1)]);
                     break;
                 default:
                     ISOException.throwIt(ISO7816.SW_INS_NOT_SUPPORTED);

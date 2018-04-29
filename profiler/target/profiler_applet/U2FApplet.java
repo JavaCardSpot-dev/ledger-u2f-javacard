@@ -472,7 +472,7 @@ public class U2FApplet extends Applet implements ExtendedLength {
                     handleSetAttestationCert(apdu);
                     break;
                 case INS_PERF_SETSTOP:
-                    PM.m_perfStop = Util.makeShort(buffer[ISO7816.OFFSET_CDATA], buffer[(short) (ISO7816.OFFSET_CDATA + 1)]);
+                    PM.m_perfStop = Util.makeShort(apdubuf[ISO7816.OFFSET_CDATA], apdubuf[(short) (ISO7816.OFFSET_CDATA + 1)]);
                     break;
                 default:
                     ISOException.throwIt(ISO7816.SW_INS_NOT_SUPPORTED);
