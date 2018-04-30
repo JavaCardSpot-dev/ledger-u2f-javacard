@@ -21,7 +21,7 @@ public class PerfTests {
     final static byte[]         APPLET_AID = {(byte) 0xa0, (byte) 0x00, (byte) 0x00, (byte) 0x06, (byte) 0x17, (byte) 0x00, (byte) 0x4f, (byte) 0x97, (byte) 0xa2, (byte) 0xe9, (byte) 0x49, (byte) 0x01};
     static final byte           APPLET_CLA = (byte) 0xF0;
     static final byte[]         APDU_TRIGGER = {APPLET_CLA, 0x01, 0, 0, 0};
-    static final byte[]         null; // TODO: set proper on-card cleaning command (if necessary). Set to null if not necessary  
+    static final byte[]         APDU_CLEANUP = null;
     static final String         CARD_NAME = "noCardNameGiven";              // TODO: fill name of your card; 
 
     static final byte           INS_PERF_SETTRAPID = (byte) 0xf5;
