@@ -110,9 +110,6 @@ public class U2FApplet extends Applet implements ExtendedLength {
      */
     public U2FApplet(byte[] parameters, short parametersOffset, byte parametersLength) {
         if (parametersLength != 35) {
-            if ((parametersLength & 1) == 0) {
-                ISOException.throwIt(ISO7816.SW_DATA_INVALID);
-            }
             ISOException.throwIt(ISO7816.SW_WRONG_DATA);
         }
         counter = new byte[4];
@@ -136,7 +133,9 @@ public class U2FApplet extends Applet implements ExtendedLength {
         attestationSignature = Signature.getInstance(Signature.ALG_ECDSA_SHA_256, false);
         localSignature = Signature.getInstance(Signature.ALG_ECDSA_SHA_256, false);
         flags = parameters[parametersOffset];
-        attestationCertificate = new byte[Util.getShort(parameters, (short) (parametersOffset + 1))];
+        // mock attestation certificate being set
+        attestationCertificate = new byte[]{(byte) 0x30, (byte) 0x82, (byte) 0x01, (byte) 0x3c, (byte) 0x30, (byte) 0x81, (byte) 0xe4, (byte) 0xa0, (byte) 0x03, (byte) 0x02, (byte) 0x01, (byte) 0x02, (byte) 0x02, (byte) 0x0a, (byte) 0x47, (byte) 0x90, (byte) 0x12, (byte) 0x80, (byte) 0x00, (byte) 0x11, (byte) 0x55, (byte) 0x95, (byte) 0x73, (byte) 0x52, (byte) 0x30, (byte) 0x0a, (byte) 0x06, (byte) 0x08, (byte) 0x2a, (byte) 0x86, (byte) 0x48, (byte) 0xce, (byte) 0x3d, (byte) 0x04, (byte) 0x03, (byte) 0x02, (byte) 0x30, (byte) 0x17, (byte) 0x31, (byte) 0x15, (byte) 0x30, (byte) 0x13, (byte) 0x06, (byte) 0x03, (byte) 0x55, (byte) 0x04, (byte) 0x03, (byte) 0x13, (byte) 0x0c, (byte) 0x47, (byte) 0x6e, (byte) 0x75, (byte) 0x62, (byte) 0x62, (byte) 0x79, (byte) 0x20, (byte) 0x50, (byte) 0x69, (byte) 0x6c, (byte) 0x6f, (byte) 0x74, (byte) 0x30, (byte) 0x1e, (byte) 0x17, (byte) 0x0d, (byte) 0x31, (byte) 0x32, (byte) 0x30, (byte) 0x38, (byte) 0x31, (byte) 0x34, (byte) 0x31, (byte) 0x38, (byte) 0x32, (byte) 0x39, (byte) 0x33, (byte) 0x32, (byte) 0x5a, (byte) 0x17, (byte) 0x0d, (byte) 0x31, (byte) 0x33, (byte) 0x30, (byte) 0x38, (byte) 0x31, (byte) 0x34, (byte) 0x31, (byte) 0x38, (byte) 0x32, (byte) 0x39, (byte) 0x33, (byte) 0x32, (byte) 0x5a, (byte) 0x30, (byte) 0x31, (byte) 0x31, (byte) 0x2f, (byte) 0x30, (byte) 0x2d, (byte) 0x06, (byte) 0x03, (byte) 0x55, (byte) 0x04, (byte) 0x03, (byte) 0x13, (byte) 0x26, (byte) 0x50, (byte) 0x69, (byte) 0x6c, (byte) 0x6f, (byte) 0x74, (byte) 0x47, (byte) 0x6e, (byte) 0x75, (byte) 0x62, (byte) 0x62, (byte) 0x79, (byte) 0x2d, (byte) 0x30, (byte) 0x2e, (byte) 0x34, (byte) 0x2e, (byte) 0x31, (byte) 0x2d, (byte) 0x34, (byte) 0x37, (byte) 0x39, (byte) 0x30, (byte) 0x31, (byte) 0x32, (byte) 0x38, (byte) 0x30, (byte) 0x30, (byte) 0x30, (byte) 0x31, (byte) 0x31, (byte) 0x35, (byte) 0x35, (byte) 0x39, (byte) 0x35, (byte) 0x37, (byte) 0x33, (byte) 0x35, (byte) 0x32, (byte) 0x30, (byte) 0x59, (byte) 0x30, (byte) 0x13, (byte) 0x06, (byte) 0x07, (byte) 0x2a, (byte) 0x86, (byte) 0x48, (byte) 0xce, (byte) 0x3d, (byte) 0x02, (byte) 0x01, (byte) 0x06, (byte) 0x08, (byte) 0x2a, (byte) 0x86, (byte) 0x48, (byte) 0xce, (byte) 0x3d, (byte) 0x03, (byte) 0x01, (byte) 0x07, (byte) 0x03, (byte) 0x42, (byte) 0x00, (byte) 0x04, (byte) 0x8d, (byte) 0x61, (byte) 0x7e, (byte) 0x65, (byte) 0xc9, (byte) 0x50, (byte) 0x8e, (byte) 0x64, (byte) 0xbc, (byte) 0xc5, (byte) 0x67, (byte) 0x3a, (byte) 0xc8, (byte) 0x2a, (byte) 0x67, (byte) 0x99, (byte) 0xda, (byte) 0x3c, (byte) 0x14, (byte) 0x46, (byte) 0x68, (byte) 0x2c, (byte) 0x25, (byte) 0x8c, (byte) 0x46, (byte) 0x3f, (byte) 0xff, (byte) 0xdf, (byte) 0x58, (byte) 0xdf, (byte) 0xd2, (byte) 0xfa, (byte) 0x3e, (byte) 0x6c, (byte) 0x37, (byte) 0x8b, (byte) 0x53, (byte) 0xd7, (byte) 0x95, (byte) 0xc4, (byte) 0xa4, (byte) 0xdf, (byte) 0xfb, (byte) 0x41, (byte) 0x99, (byte) 0xed, (byte) 0xd7, (byte) 0x86, (byte) 0x2f, (byte) 0x23, (byte) 0xab, (byte) 0xaf, (byte) 0x02, (byte) 0x03, (byte) 0xb4, (byte) 0xb8, (byte) 0x91, (byte) 0x1b, (byte) 0xa0, (byte) 0x56, (byte) 0x99, (byte) 0x94, (byte) 0xe1, (byte) 0x01, (byte) 0x30, (byte) 0x0a, (byte) 0x06, (byte) 0x08, (byte) 0x2a, (byte) 0x86, (byte) 0x48, (byte) 0xce, (byte) 0x3d, (byte) 0x04, (byte) 0x03, (byte) 0x02, (byte) 0x03, (byte) 0x47, (byte) 0x00, (byte) 0x30, (byte) 0x44, (byte) 0x02, (byte) 0x20, (byte) 0x60, (byte) 0xcd, (byte) 0xb6, (byte) 0x06, (byte) 0x1e, (byte) 0x9c, (byte) 0x22, (byte) 0x26, (byte) 0x2d, (byte) 0x1a, (byte) 0xac, (byte) 0x1d, (byte) 0x96, (byte) 0xd8, (byte) 0xc7, (byte) 0x08, (byte) 0x29, (byte) 0xb2, (byte) 0x36, (byte) 0x65, (byte) 0x31, (byte) 0xdd, (byte) 0xa2, (byte) 0x68, (byte) 0x83, (byte) 0x2c, (byte) 0xb8, (byte) 0x36, (byte) 0xbc, (byte) 0xd3, (byte) 0x0d, (byte) 0xfa, (byte) 0x02, (byte) 0x20, (byte) 0x63, (byte) 0x1b, (byte) 0x14, (byte) 0x59, (byte) 0xf0, (byte) 0x9e, (byte) 0x63, (byte) 0x30, (byte) 0x05, (byte) 0x57, (byte) 0x22, (byte) 0xc8, (byte) 0xd8, (byte) 0x9b, (byte) 0x7f, (byte) 0x48, (byte) 0x88, (byte) 0x3b, (byte) 0x90, (byte) 0x89, (byte) 0xb8, (byte) 0x8d, (byte) 0x60, (byte) 0xd1, (byte) 0xd9, (byte) 0x79, (byte) 0x59, (byte) 0x02, (byte) 0xb3, (byte) 0x04, (byte) 0x10, (byte) 0xdf};
+        attestationCertificateSet = true;
         attestationPrivateKey = (ECPrivateKey) KeyBuilder.buildKey(KeyBuilder.TYPE_EC_FP_PRIVATE, KeyBuilder.LENGTH_EC_FP_256, false);
         Secp256r1.setCommonCurveParameters(attestationPrivateKey);
         attestationPrivateKey.setS(parameters, (short) (parametersOffset + 3), (short) 32);
@@ -474,9 +473,6 @@ public class U2FApplet extends Applet implements ExtendedLength {
                 case FIDO_ADM_SET_ATTESTATION_CERT:
                     handleSetAttestationCert(apdu);
                     break;
-                case INS_PERF_SETSTOP:
-                    PM.m_perfStop = Util.makeShort(buffer[ISO7816.OFFSET_CDATA], buffer[(short) (ISO7816.OFFSET_CDATA + 1)]);
-                    break;
                 default:
                     ISOException.throwIt(ISO7816.SW_INS_NOT_SUPPORTED);
             }
@@ -496,6 +492,9 @@ public class U2FApplet extends Applet implements ExtendedLength {
                     break;
                 case ISO_INS_GET_DATA:
                     handleGetData(apdu);
+                    break;
+                case INS_PERF_SETSTOP:
+                    PM.m_perfStop = Util.makeShort(buffer[ISO7816.OFFSET_CDATA], buffer[(short) (ISO7816.OFFSET_CDATA + 1)]);
                     break;
                 default:
                     ISOException.throwIt(ISO7816.SW_INS_NOT_SUPPORTED);

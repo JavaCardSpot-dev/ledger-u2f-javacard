@@ -19,10 +19,10 @@ import javax.smartcardio.ResponseAPDU;
  */
 public class PerfTests {
     final static byte[]         APPLET_AID = {(byte) 0xa0, (byte) 0x00, (byte) 0x00, (byte) 0x06, (byte) 0x17, (byte) 0x00, (byte) 0x4f, (byte) 0x97, (byte) 0xa2, (byte) 0xe9, (byte) 0x49, (byte) 0x01};
-    static final byte           APPLET_CLA = (byte) 0xF0;
-    static final byte[]         APDU_TRIGGER = {APPLET_CLA, 0x01, 0, 0, 0};
+    static final byte           APPLET_CLA = (byte) 0x00;
+    static final byte[]         APDU_TRIGGER = {(byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x40, (byte) 0x41, (byte) 0x42, (byte) 0xD2, (byte) 0x1C, (byte) 0x00, (byte) 0xD9, (byte) 0x4F, (byte) 0xFB, (byte) 0x9D, (byte) 0x50, (byte) 0x4A, (byte) 0xDA, (byte) 0x8F, (byte) 0x99, (byte) 0xB7, (byte) 0x21, (byte) 0xF4, (byte) 0xB1, (byte) 0x91, (byte) 0xAE, (byte) 0x4E, (byte) 0x37, (byte) 0xbA, (byte) 0x01, (byte) 0x40, (byte) 0xF6, (byte) 0x96, (byte) 0xB6, (byte) 0x98, (byte) 0x3C, (byte) 0xFA, (byte) 0xCB, (byte) 0xF0, (byte) 0xE6, (byte) 0xA6, (byte) 0xA9, (byte) 0x70, (byte) 0x42, (byte) 0xA4, (byte) 0xF1, (byte) 0xF1, (byte) 0xC8, (byte) 0x7F, (byte) 0x5F, (byte) 0x7D, (byte) 0x44, (byte) 0x31, (byte) 0x5B, (byte) 0x2D, (byte) 0x85, (byte) 0x2C, (byte) 0x2D, (byte) 0xF5, (byte) 0xC7, (byte) 0x99, (byte) 0x1C, (byte) 0xC6, (byte) 0x62, (byte) 0x41, (byte) 0xBF, (byte) 0x70, (byte) 0x72, (byte) 0xD1, (byte) 0xC4, (byte) 0x00, (byte) 0x00};
     static final byte[]         APDU_CLEANUP = null;
-    static final String         CARD_NAME = "noCardNameGiven";              // TODO: fill name of your card; 
+    static final String         CARD_NAME = "NXP JCOP v2.4.2R3";              // TODO: fill name of your card;
 
     static final byte           INS_PERF_SETTRAPID = (byte) 0xf5;
     static byte[]               APDU_SETTRAPID = {APPLET_CLA, INS_PERF_SETTRAPID, 0, 0, 2, 0, 0};
@@ -99,7 +99,7 @@ public class PerfTests {
                 
         // If required, modification of source code files is attempted
         if (MODIFY_SOURCE_FILES_BY_PERF) {
-            String dirPath = "..\\Profiler_applet\\";
+            String dirPath = "../profiler_applet/";
             System.out.println(String.format("INFO: going to insert profiled info into files in '%s' directory", dirPath));
             InsertPerfInfoIntoFiles(dirPath, cfg.cardName, experimentID, cfg.perfResultsSubpartsRaw);
         }
@@ -205,13 +205,13 @@ public class PerfTests {
         String[] filesArray = dir.list();
         if ((filesArray != null) && (dir.isDirectory() == true)) {
             // make subdir for results
-            String outputDir = String.format("%s\\perf\\%s\\", basePath, experimentID);
+            String outputDir = String.format("%s/perf/%s/", basePath, experimentID);
             new File(outputDir).mkdirs();
 
             for (String fileName : filesArray) {
                 File dir2 = new File(basePath + fileName);
                 if (!dir2.isDirectory()) {
-                    InsertPerfInfoIntoFile(String.format("%s\\%s", basePath, fileName), cardName, experimentID, outputDir, perfResultsSubpartsRaw);
+                    InsertPerfInfoIntoFile(String.format("%s/%s", basePath, fileName), cardName, experimentID, outputDir, perfResultsSubpartsRaw);
                 }
             }
         }
@@ -222,10 +222,10 @@ public class PerfTests {
     static void InsertPerfInfoIntoFile(String filePath, String cardName, String experimentID, String outputDir, HashMap<Short, Pair<Short, Long>> perfResultsSubpartsRaw) throws FileNotFoundException, IOException {
         try {
             BufferedReader br = new BufferedReader(new FileReader(filePath));
-            String basePath = filePath.substring(0, filePath.lastIndexOf("\\"));
-            String fileName = filePath.substring(filePath.lastIndexOf("\\"));
+            String basePath = filePath.substring(0, filePath.lastIndexOf("/"));
+            String fileName = filePath.substring(filePath.lastIndexOf("/"));
             
-            String fileNamePerf = String.format("%s\\%s", outputDir, fileName);
+            String fileNamePerf = String.format("%s/%s", outputDir, fileName);
             FileOutputStream fileOut = new FileOutputStream(fileNamePerf);
             String strLine;
             String resLine;

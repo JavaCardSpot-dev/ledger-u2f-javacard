@@ -95,7 +95,9 @@ public class SimulatorTestBase {
         List<byte[]> responses = new LinkedList<>();
         CommandAPDU cmd = new CommandAPDU(FIDO_CLA, ISO_INS_GET_DATA, 0, 0, ne);
         do {
+            debugLog(cmd);
             ResponseAPDU getDataAPDU = sim.transmitCommand(cmd);
+            debugLog(getDataAPDU);
             responses.add(getDataAPDU.getData());
             int nr = getDataAPDU.getNr();
 
