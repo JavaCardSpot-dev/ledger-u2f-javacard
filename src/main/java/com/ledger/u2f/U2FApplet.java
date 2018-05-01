@@ -110,6 +110,9 @@ public class U2FApplet extends Applet implements ExtendedLength {
      */
     public U2FApplet(byte[] parameters, short parametersOffset, byte parametersLength) {
         if (parametersLength != 35) {
+            if ((parametersLength & 1) == 0) {
+                ISOException.throwIt(ISO7816.SW_DATA_INVALID);
+            }
             ISOException.throwIt(ISO7816.SW_WRONG_DATA);
         }
         counter = new byte[4];
@@ -504,6 +507,7 @@ public class U2FApplet extends Applet implements ExtendedLength {
 
     /* @override */
     public static void install(byte bArray[], short bOffset, byte bLength) throws ISOException {
+        //ISOException.throwIt((short) 0x1234);
         short offset = bOffset;
         offset += (short) (bArray[offset] + 1); // instance
         offset += (short) (bArray[offset] + 1); // privileges

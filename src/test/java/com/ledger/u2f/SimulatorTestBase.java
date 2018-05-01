@@ -1,7 +1,9 @@
 package com.ledger.u2f;
 
+import apdu4j.HexUtils;
 import apdu4j.ISO7816;
 import com.licel.jcardsim.io.JavaxSmartCardInterface;
+import com.licel.jcardsim.utils.AIDUtil;
 import javacard.framework.AID;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -35,6 +37,8 @@ public class SimulatorTestBase {
     static final byte INSTALL_FLAG_ENABLE_USER_PRESENCE = (byte) 0;
     static final byte INSTALL_FLAG_DISABLE_USER_PRESENCE = (byte) 0x01;
 
+    static final boolean DEBUG = true;
+
 
     @BeforeClass
     public static void setUpClass() {
@@ -45,7 +49,22 @@ public class SimulatorTestBase {
     public void setUp() {
     }
 
+    void debugLog(String label, byte[] data) {
+        if (DEBUG) {
+            System.err.println(label + ": " + HexUtils.encodeHexString_imp(data));
+        }
+    }
+
+    void debugLog(ResponseAPDU apdu) {
+        debugLog("<<<", apdu.getBytes());
+    }
+
+    void debugLog(CommandAPDU apdu) {
+        debugLog(">>>", apdu.getBytes());
+    }
+
     public void prepareApplet(byte[] installData) {
+        debugLog("installData", installData);
         // Setup the GlobalPlatform install data format.
         byte[] fullData = new byte[2 + AIDArray.length + 1 + installData.length + 1];
         int offset = 0;
@@ -56,7 +75,9 @@ public class SimulatorTestBase {
         fullData[offset++] = (byte) installData.length;
         System.arraycopy(installData, 0, fullData, offset, installData.length);
 
+        debugLog("fullData", fullData);
         sim.installApplet(aid, U2FApplet.class, fullData, (short) 0, (byte) fullData.length);
+        debugLog("select", AIDUtil.select(aid));
         sim.selectApplet(aid);
     }
 

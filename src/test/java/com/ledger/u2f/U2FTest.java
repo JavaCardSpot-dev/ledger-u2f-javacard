@@ -48,6 +48,7 @@ public class U2FTest extends SimulatorTestBase {
         int[] fidoINS = {0x01, 0x02, 0x03};
         for (int ins : fidoINS) {
             CommandAPDU apdu = new CommandAPDU(FIDO_CLA, ins, 0, 0);
+            debugLog(apdu);
             ResponseAPDU resp = sim.transmitCommand(apdu);
             assertThat(resp.getSW(), is(ISO7816.SW_SECURITY_STATUS_NOT_SATISFIED));
         }
@@ -58,6 +59,7 @@ public class U2FTest extends SimulatorTestBase {
         prepareApplet(INSTALL_FLAG_ENABLE_USER_PRESENCE, attestationCert.length, attestatioPrivkey);
 
         CommandAPDU certApdu = new CommandAPDU(PROPRIETARY_CLA, FIDO_ADM_SET_ATTESTATION_CERT, 0, 0, attestationCert);
+        debugLog(certApdu);
         ResponseAPDU certResponse = sim.transmitCommand(certApdu);
         assertThat(certResponse.getSW(), is(ISO7816.SW_NO_ERROR));
     }
@@ -67,8 +69,10 @@ public class U2FTest extends SimulatorTestBase {
         prepareApplet(INSTALL_FLAG_ENABLE_USER_PRESENCE, attestationCert.length, attestatioPrivkey);
 
         CommandAPDU certApdu = new CommandAPDU(PROPRIETARY_CLA, FIDO_ADM_SET_ATTESTATION_CERT, 0, 0, attestationCert);
+        debugLog(certApdu);
         sim.transmitCommand(certApdu);
 
+        debugLog(certApdu);
         ResponseAPDU certResponse = sim.transmitCommand(certApdu);
         assertThat(certResponse.getSW(), is(ISO7816.SW_SECURITY_STATUS_NOT_SATISFIED));
     }
@@ -102,7 +106,9 @@ public class U2FTest extends SimulatorTestBase {
         System.arraycopy(challenge, 0, enrollData, 0, 32);
         System.arraycopy(application, 0, enrollData, 32, 32);
 
-        ResponseAPDU responseAPDU = sim.transmitCommand(new CommandAPDU(FIDO_CLA, FIDO_INS_ENROLL, 0, 0, enrollData, 65535));
+        CommandAPDU enrollAPDU = new CommandAPDU(FIDO_CLA, FIDO_INS_ENROLL, 0, 0, enrollData, 65535);
+        debugLog(enrollAPDU);
+        ResponseAPDU responseAPDU = sim.transmitCommand(enrollAPDU);
         assertThat(responseAPDU.getSW(), is(ISO7816.SW_NO_ERROR));
 
         byte[] responseData = responseAPDU.getData();
@@ -222,7 +228,10 @@ public class U2FTest extends SimulatorTestBase {
         System.arraycopy(challenge, 0, enrollData, 0, 32);
         System.arraycopy(application, 0, enrollData, 32, 32);
 
-        ResponseAPDU enrollResponse = sim.transmitCommand(new CommandAPDU(FIDO_CLA, FIDO_INS_ENROLL, 0, 0, enrollData, 65535));
+        CommandAPDU enrollAPDU = new CommandAPDU(FIDO_CLA, FIDO_INS_ENROLL, 0, 0, enrollData, 65535);
+        debugLog(enrollAPDU);
+        ResponseAPDU enrollResponse = sim.transmitCommand(enrollAPDU);
+        debugLog(enrollResponse);
         byte[] responseData = enrollResponse.getData();
 
         sim.reset();
@@ -231,14 +240,18 @@ public class U2FTest extends SimulatorTestBase {
         byte keyHandleLength = responseData[66];
         byte[] keyHandle = new byte[keyHandleLength];
         System.arraycopy(responseData, 67, keyHandle, 0, keyHandleLength);
+        debugLog("keyHandle", keyHandle);
 
         byte[] signData = new byte[65 + keyHandleLength];
         System.arraycopy(challenge, 0, signData, 0, 32);
         System.arraycopy(application, 0, signData, 32, 32);
         signData[64] = keyHandleLength;
         System.arraycopy(keyHandle, 0, signData, 65, keyHandleLength);
+        debugLog("signData", signData);
 
-        ResponseAPDU signResponse = sim.transmitCommand(new CommandAPDU(FIDO_CLA, FIDO_INS_SIGN, P1_SIGN_OPERATION, 0, signData, 65535));
+        CommandAPDU signAPDU = new CommandAPDU(FIDO_CLA, FIDO_INS_SIGN, P1_SIGN_OPERATION, 0, signData, 65535);
+        debugLog(signAPDU);
+        ResponseAPDU signResponse = sim.transmitCommand(signAPDU);
         assertThat(signResponse.getSW(), is(ISO7816.SW_NO_ERROR));
     }
 
