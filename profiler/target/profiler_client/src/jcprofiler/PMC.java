@@ -1,4 +1,4 @@
-package com.ledger.u2f;
+package jcprofiler;
 
 /**
  * Utility class for performance profiling constants
