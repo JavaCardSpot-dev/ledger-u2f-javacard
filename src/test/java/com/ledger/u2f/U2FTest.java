@@ -95,8 +95,10 @@ public class U2FTest extends SimulatorTestBase {
 
         sim.transmitCommand(new CommandAPDU(PROPRIETARY_CLA, FIDO_ADM_SET_ATTESTATION_CERT, 0, 0, attestationCert));
 
-        ResponseAPDU versionAPDU = sim.transmitCommand(new CommandAPDU(FIDO_CLA, FIDO_INS_VERSION, 0, 0));
-        assertThat(versionAPDU.getBytes(), is(U2F_VERSION_RESP));
+        CommandAPDU versionAPDU = new CommandAPDU(FIDO_CLA, FIDO_INS_VERSION, 0, 0);
+        debugLog(versionAPDU);
+        ResponseAPDU versionResponse = sim.transmitCommand(versionAPDU);
+        assertThat(versionResponse.getBytes(), is(U2F_VERSION_RESP));
     }
 
     @Test
